@@ -1,3 +1,5 @@
-{% for comment in comments %}
-    {% include 'post/comment_single.html' %}
-{% endfor %}
+{% if comments %}
+    {% for comment in comments %}
+        {% include 'post/comment_single.html' %}
+    {% endfor %}
+{% endif %}

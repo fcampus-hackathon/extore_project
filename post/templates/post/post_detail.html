@@ -17,7 +17,7 @@
 <div style="height:100px;"></div>
 <div id="screen">
     <div id="post-list">
-        <button class="btn btn-primary back-to-page" onclick="history.go(-1);">목록</button>
+        <button class="btn btn-primary back-to-page" onclick="history.go(-1);">돌아가기</button>
         <div class="card" style="width: 40rem;">
           <div id="profiles">
               <div class="img-profile" style="background-image:url({{object.author.profile.url}})"></div>
@@ -32,7 +32,7 @@
              <ul style="list-style-type:none; padding:0">
                   <li style="height:30px;margin-bottom:10px;">
                       <a href="{% url 'post:post_like' object.id %}" class="btn-like {% if user in object.like.all %}activate{% endif %}" style="height:30px; margin-right:10px;"></a>
-                      <a href="{% url 'post:detail' object.id %}" class="btn-comment" style="height:30px;"></a>
+                      <a href="{% url 'post:detail' object.id %}?extore={{group.id}}" class="btn-comment" style="height:30px;"></a>
                       <a href="{% url 'post:post_saved' object.id %}" class="btn-save {% if user in object.saved.all %}activate{% endif %}" style="float:right; height:30px;"></a>
                   </li>
                   <li class="like-count" style="font-size:15px; font-weight:bold;">
@@ -47,7 +47,7 @@
                       {% tags_for_object object as tags %}
                       {% if tags %}
                         {% for tag in tags %}
-                            <a class="tags" href="{% url 'post:post_taggedlist' tag.name %}">#{{tag.name}}</a>
+                            <a class="tags" href="{% url 'post:post_taggedlist' tag.name %}?extore={{group.id}}">#{{tag.name}}</a>
                       {% endfor %}
                       {% endif %}
                   </li>
@@ -148,9 +148,7 @@ $(function () {
             method: "POST",
             data: params,
         }).done(function(data){
-            $('#comment_list').prepend(data.html);
-            $('input[name="is_ajax"]').val("");
-            $('#id_text').val("");
+            location.reload();
         });
     });
 
@@ -180,6 +178,50 @@ $(function () {
             }
         });
     });
+
+    $(".btn-comment-delete").click(function(e){
+        e.preventDefault();
+        var input = confirm('댓글을 삭제하시겠습니까?');
+        if (input==true){
+            selected_object = $(e.currentTarget);
+            url = selected_object.attr('href')+"?is_ajax=1";
+            console.log(url);
+            $.ajax({
+                url: url,
+
+            }).done(function(data){
+                if (data.works){
+                    selected_object.parents('.comment-single').remove();
+                }
+            });
+        }
+    });
+
+    $('.btn-comment-update').click(function(e) {
+        e.preventDefault();
+        selected_object = $(e.currentTarget);
+        url = selected_object.attr('href')+'?is_ajax=1';
+        comment = selected_object.siblings('p').children('.comment-text');
+        input = "<input type='text' class='update-text' value='"+comment.text()+"'>";
+        comment.html(input);
+        $('.update-text').keypress(function(e){
+            if (e.keyCode==13) {
+                text = $(this).val();
+                $.ajax({
+                    url:url,
+                    data:{
+                        text:text
+                    }
+                }).done(function(data) {
+                    if(data.works) {
+                        comment.text(text);
+                    }
+                });
+            }
+        });
+    });
+
 });
+
 </script>
 {% endblock %}

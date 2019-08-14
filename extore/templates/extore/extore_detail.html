@@ -1,0 +1,63 @@
+{% extends 'post-base.html' %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<hr>
+<nav class="navbar navbar-expand-lg navbar-light bg-white text-center">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav extore mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'board:board_list' %}?extore={{group.id}}">Free Talk <span class="sr-only">(current)</span></a>
+      </li>
+        <li class="nav-item active">
+        <a class="nav-link" href="{% url 'post:list' %}?extore={{group.id}}">Post <span class="sr-only">(current)</span></a>
+      </li>
+        <li class="nav-item active">
+        <a class="nav-link" href="{% url 'post:last_memory' %}?extore={{group.id}}">Last Memory <span class="sr-only">(current)</span></a>
+      </li>
+        <li class="nav-item active">
+        <a class="nav-link" href="{% url 'schedule:index' %}?extore={{group.id}}">Schedule <span class="sr-only">(current)</span></a>
+      </li>
+
+    </ul>
+  </div>
+</nav>
+{% load static %}
+<div class="row mx-auto">
+    <div class="col">
+        <div class="container">
+            <div class="card" style="width: 12rem; height: 35rem;">
+                <div class="card-body">
+                    <h6 class="text-center">{{group.title}}</h6>
+                    <hr>
+                    {% for member in group.member.all %}
+                        <div class="profile_img text-center" >
+                            <img src="{{member.profile.url}}" >
+                            <div class="member_text text-center" style="font-size:15px;">{{member.last_name}}{{member.first_name}}</div>
+                            <br>
+                            </div>
+                    {% endfor %}
+                        <div class="profile_img text-center" >
+                        <img src="{% static 'images/plus_icon.png' %}" >
+                            <div class="member_text text-center" style="font-size:15px;">Add</div>
+                            <br>
+                        </div>
+
+                    <div class="card-footer text-center text-muted">
+                            <h5>Extore List</h5><hr>
+                            {% for group in group_list %}
+                                <div class="extore_list text-center">
+                                    {{group.title}}
+                                </div>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

@@ -1,0 +1,5 @@
+{% if comments %}
+    {% for comment in comments %}
+        {% include 'board/comment_single.html' %}
+    {% endfor %}
+{% endif %}
